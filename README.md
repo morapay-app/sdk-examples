@@ -5,6 +5,7 @@ In-house integration samples for testing `@morapay/sdk` the way external merchan
 | Example | Stack | Port | Purpose |
 |---------|-------|------|---------|
 | [`ecommerce-nextjs`](./ecommerce-nextjs) | Next.js 15 | `3020` | Ecommerce storefront — products, payment links, widget vs redirect |
+| [`python-api`](./python-api) | FastAPI | `8080` | Backend-only — signing, products, checkout links (no UI) |
 | `express-server` | Express | TBD | Server-side only integration (coming next) |
 
 The older [`sdk-sample-1`](../sdk-sample-1) lab (port `3010`) remains a full resource explorer. These examples are **scenario-focused** demos.
@@ -30,6 +31,19 @@ pnpm install && pnpm dev
 ```
 
 Open http://localhost:3020 — use the floating **config orb** (bottom-right) to switch checkout mode and link type.
+
+## Quick start (Python API)
+
+```bash
+cd sdk-examples/python-api
+python -m venv .venv && source .venv/bin/activate
+pip install -r requirements.txt
+cp .env.example .env
+# fill MORAPAY_PUBLIC_KEY + MORAPAY_SECRET_KEY
+uvicorn app:app --reload --port 8080
+```
+
+Or scaffold a fresh copy: `npx create-morapay-app` → option **4**.
 
 ## Local stack
 
