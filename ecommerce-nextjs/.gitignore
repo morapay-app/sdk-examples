@@ -1,0 +1,5 @@
+node_modules/
+.next/
+.env
+.env.local
+public/widget/morapay-checkout.js

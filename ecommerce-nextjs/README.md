@@ -1,0 +1,95 @@
+# Ecommerce example — `@morapay/sdk`
+
+In-house storefront demo showing how a merchant binds products to Morapay and checks out with either **widget** or **redirect**.
+
+## What it demonstrates
+
+1. **Product binding** — `morapay.products.create()` seeds the catalog; the grid reads `morapay.products()` with `checkoutPublicCode` per SKU.
+2. **Checkout link strategy** (config orb)
+   - **Catalog** (default) — `products.ensureCheckoutLink()` reuses one unlimited link per product; Buy now opens stored `publicCode` (read + open)
+   - **Invoice** — `products.link({ isOneTime: true, idempotencyKey })` creates a fresh one-time link per order; retries dedupe via Core `Morapay-Idempotency-Key`
+3. **Widget / redirect modes** (config orb)
+   - **Widget — Preview** (default) — staging modal + `/api/public` link data + MoMo OTP preview (2 min resend cooldown)
+   - **Widget — Live** — hosted checkout iframe (real MoMo OTP in checkout app)
+   - **Redirect** — full-page hosted checkout
+
+## Setup
+
+```bash
+# 1. Build SDK + widget
+cd ../../sdk && pnpm install && pnpm run build
+cd ../morapay-web/packages/checkout-widget && pnpm run build
+
+# 2. Configure & run
+cd ../../sdk-examples/ecommerce-nextjs
+cp .env.example .env.local
+# MORAPAY_PUBLIC_KEY, MORAPAY_SECRET_KEY, MORAPAY_BASE_URL, MORAPAY_CHECKOUT_BASE_URL
+pnpm install && pnpm dev
+```
+
+`pnpm dev` runs `predev` → copies the latest widget into `public/widget/morapay-checkout.js`.
+
+Open http://localhost:3020
+
+## Local full stack
+
+```bash
+cd backend && pnpm dev                    # API :4001
+cd morapay-web/apps/checkout && pnpm dev  # Checkout :3002
+cd sdk-examples/ecommerce-nextjs && pnpm dev  # Store :3020
+```
+
+Refresh widget after checkout-widget changes:
+
+```bash
+cd morapay-web/packages/checkout-widget && pnpm run build
+cd sdk-examples/ecommerce-nextjs && pnpm copy-widget
+```
+
+If dev throws stale chunk errors: `pnpm dev:clean`
+
+## Architecture
+
+```
+Browser storefront
+  Catalog Buy now (checkoutPublicCode set)
+    → openPaymentLinkCheckout({ publicCode }) — no POST
+
+  First bind / invoice
+    → POST /api/products/[id]/checkout  (Next.js, holds sk_*)
+      → catalog: products.ensureCheckoutLink()
+      → invoice: products.link({ isOneTime: true, orderId })
+
+  Preview widget
+    → openPaymentLinkCheckout({ mode: "preview", apiBaseUrl: "/api/public" })
+    → GET /api/public/payment-links/[code]
+    → MoMo: phone → Send OTP → resend timer (preview only)
+
+  Live widget / redirect
+    → checkout.morapay.io/{publicCode} (real payments)
+```
+
+Secrets never leave the server. Store `checkoutPublicCode` on your product row (enriched from Morapay links in this demo).
+
+Shared helpers: `sdk/nextjs/` — see `sdk/nextjs/README.md`.
+
+## SDK: catalog vs invoice
+
+```ts
+// Catalog — one reusable link per SKU (recommended for shops)
+const catalog = await morapay.products.ensureCheckoutLink(product.id);
+// Store catalog.publicCode on your product record → Buy now = read + open
+
+// Invoice — fresh link per order; idempotent retries
+const invoice = await morapay.products.link(product.id, {
+  isOneTime: true,
+  customerEmail: "alex@example.com",
+  idempotencyKey: "ord_123",
+  metadata: { orderId: "ord_123" },
+});
+```
+
+| Pattern | SDK call | Buy now |
+|---------|----------|---------|
+| Catalog / product checkout | `ensureCheckoutLink()` | Open stored `publicCode` |
+| Invoice / order checkout | `link({ isOneTime: true })` | Create (or dedupe) then open |
