@@ -1,3 +1,9 @@
+/**
+ * Serialize Morapay SDK errors for Next.js API routes.
+ *
+ * For typed branching on the server, compare against {@link MorapayErrorCode}:
+ * `err.code === MorapayErrorCode.LinksAmountBelowMinimum`
+ */
 import { isMorapayError } from "@morapay/sdk";
 import { NextResponse } from "next/server";
 

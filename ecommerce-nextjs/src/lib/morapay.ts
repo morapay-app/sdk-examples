@@ -47,6 +47,10 @@ export function getApiBaseUrl(): string {
   return readMorapayUrlEnv("MORAPAY_BASE_URL", MORAPAY_PRODUCTION_API_URL);
 }
 
+export function getCheckoutBaseUrl(): string {
+  return readMorapayUrlEnv("MORAPAY_CHECKOUT_BASE_URL", MORAPAY_PRODUCTION_CHECKOUT_URL);
+}
+
 export function getPublicConfig() {
   const widgetRaw = process.env.MORAPAY_WIDGET_SCRIPT_URL;
   if (widgetRaw !== undefined && !widgetRaw.trim()) {
