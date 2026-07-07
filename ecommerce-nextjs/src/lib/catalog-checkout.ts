@@ -1,4 +1,4 @@
-import type { MorapayClient, PaymentLink, Product } from "@morapay/sdk";
+import type { Morapay, PaymentLink, Product } from "@morapay/sdk";
 
 /** Merchant-side field: stable catalog checkout code for a product SKU. */
 export type StorefrontProduct = Product & {
@@ -10,14 +10,14 @@ export function findCatalogCheckoutLink(links: PaymentLink[]): PaymentLink | und
 }
 
 export async function resolveCatalogCheckoutLink(
-  client: MorapayClient,
+  client: Morapay,
   productId: string
 ): Promise<PaymentLink> {
   return client.products.ensureCheckoutLink(productId);
 }
 
 export async function enrichProductsWithCatalogCodes(
-  client: MorapayClient,
+  client: Morapay,
   products: Product[]
 ): Promise<StorefrontProduct[]> {
   const enriched = await Promise.all(
@@ -38,7 +38,7 @@ export async function enrichProductsWithCatalogCodes(
 }
 
 export async function bindCatalogCheckoutLink(
-  client: MorapayClient,
+  client: Morapay,
   productId: string
 ): Promise<PaymentLink> {
   return resolveCatalogCheckoutLink(client, productId);

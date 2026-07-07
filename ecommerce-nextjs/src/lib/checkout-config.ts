@@ -30,11 +30,14 @@ export function loadCheckoutConfig(): DemoCheckoutConfig {
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
     if (!raw) return DEFAULT_CHECKOUT_CONFIG;
-    const parsed = JSON.parse(raw) as Partial<DemoCheckoutConfig> & { linkKind?: string };
+    const parsed = JSON.parse(raw) as Partial<DemoCheckoutConfig> & {
+      linkKind?: LinkKind | LegacyLinkKind;
+    };
+    const rawLinkKind = parsed.linkKind as LinkKind | LegacyLinkKind | undefined;
     const linkKind =
-      parsed.linkKind === "invoice" || parsed.linkKind === "one-time"
+      rawLinkKind === "invoice" || rawLinkKind === "one-time"
         ? "invoice"
-        : parsed.linkKind === "catalog" || parsed.linkKind === "reusable"
+        : rawLinkKind === "catalog" || rawLinkKind === "reusable"
           ? "catalog"
           : DEFAULT_CHECKOUT_CONFIG.linkKind;
     return {

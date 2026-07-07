@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import type { PaymentLink } from "@morapay/sdk";
 import { jsonError } from "@/lib/api-error";
 import { getMorapayClient } from "@/lib/morapay";
 
@@ -30,7 +31,7 @@ export async function POST(
         : {}),
     };
 
-    let link;
+    let link: PaymentLink;
     let reused = false;
 
     if (isOneTime) {
