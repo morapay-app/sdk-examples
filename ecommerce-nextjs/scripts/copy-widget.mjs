@@ -4,8 +4,8 @@ import { fileURLToPath } from "node:url";
 
 const here = path.dirname(fileURLToPath(import.meta.url));
 const candidates = [
-  path.resolve(here, "../../../morapay-web/packages/checkout-widget/dist/morapay-checkout.js"),
-  path.resolve(here, "../../../frontend/packages/checkout-widget/dist/morapay-checkout.js"),
+  path.resolve(here, "../../../frontend/packages/react/dist/morapay-checkout.js"),
+  path.resolve(here, "../../../morapay-web/packages/react/dist/morapay-checkout.js"),
   path.resolve(here, "../../../morapay-web/apps/checkout/public/widget/morapay-checkout.js"),
 ];
 const destDir = path.resolve(here, "../public/widget");
@@ -39,7 +39,7 @@ try {
   }
   if (!copied) {
     console.warn(
-      "[copy-widget] skipped: build checkout-widget first (cd morapay-web/packages/checkout-widget && pnpm run build)"
+      "[copy-widget] skipped: build @morapay/react first (cd frontend/packages/react && pnpm run build)"
     );
   }
 } catch (err) {
