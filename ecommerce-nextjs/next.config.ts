@@ -8,7 +8,7 @@ const monorepoRoot = path.join(root, "../..");
 const nextConfig: NextConfig = {
   reactStrictMode: true,
   outputFileTracingRoot: monorepoRoot,
-  transpilePackages: ["@morapay/sdk"],
+  transpilePackages: ["@morapay/sdk", "@morapay/react"],
 };
 
 export default nextConfig;

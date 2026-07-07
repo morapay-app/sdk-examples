@@ -1,9 +1,5 @@
 import type { Morapay, PaymentLink, Product } from "@morapay/sdk";
-
-/** Merchant-side field: stable catalog checkout code for a product SKU. */
-export type StorefrontProduct = Product & {
-  checkoutPublicCode?: string | null;
-};
+import type { StorefrontProduct } from "./products.types";
 
 export function findCatalogCheckoutLink(links: PaymentLink[]): PaymentLink | undefined {
   return links.find((link) => link.isActive && link.isOneTime === false);

@@ -1,6 +1,8 @@
 "use client";
 
-import type { PaymentLink, Product } from "@morapay/sdk";
+import type { Product } from "@morapay/sdk";
+import { BagIcon } from "@/ui/BagIcon";
+import { StarIcon } from "@/ui/StarIcon";
 import {
   formatProductPrice,
   productCategory,
@@ -8,7 +10,8 @@ import {
   productLabel,
   productRating,
   productSoldLabel,
-} from "@/lib/product-display";
+} from "../product-display.utils";
+import type { CheckoutResult } from "../products.types";
 
 type ProductCardProps = {
   product: Product;
@@ -21,23 +24,6 @@ const TYPE_EMOJI: Record<string, string> = {
   PHYSICAL: "📦",
   SERVICE: "🛠",
 };
-
-function StarIcon() {
-  return (
-    <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden>
-      <path d="M12 2l2.9 6.26L22 9.27l-5 4.87L18.18 22 12 18.27 5.82 22 7 14.14l-5-4.87 7.1-1.01L12 2z" />
-    </svg>
-  );
-}
-
-function BagIcon() {
-  return (
-    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" aria-hidden>
-      <path d="M6 7h12l-1.2 13H7.2L6 7z" />
-      <path d="M9 7V5a3 3 0 0 1 6 0v2" />
-    </svg>
-  );
-}
 
 export function ProductCard({ product, busy, onBuy }: ProductCardProps) {
   const emoji = TYPE_EMOJI[product.type] ?? "🛍";
@@ -96,10 +82,4 @@ export function ProductCard({ product, busy, onBuy }: ProductCardProps) {
   );
 }
 
-export type CheckoutResult = {
-  link: PaymentLink;
-  checkoutUrl: string;
-  isPaid: boolean;
-  reused?: boolean;
-  linkStrategy?: "catalog" | "invoice";
-};
+export type { CheckoutResult };

@@ -13,6 +13,7 @@
     "lint": "tsc --noEmit"
   },
   "dependencies": {
+    "@morapay/react": "file:../../frontend/packages/react",
     "@morapay/sdk": "file:../../sdk",
     "next": "16.2.9",
     "react": "^19.0.0",

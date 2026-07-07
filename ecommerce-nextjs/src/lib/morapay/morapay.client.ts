@@ -1,23 +1,9 @@
 import { Morapay, type MorapayOptions } from "@morapay/sdk";
-
-/** Morapay production hosts — same defaults as `@morapay/sdk`. */
-export const MORAPAY_PRODUCTION_API_URL = "https://api.morapay.io";
-export const MORAPAY_PRODUCTION_CHECKOUT_URL = "https://checkout.morapay.io";
-
-/**
- * Read a URL env var. Unset → production default. Empty string → throw (misconfiguration).
- */
-export function readMorapayUrlEnv(name: string, productionDefault: string): string {
-  const raw = process.env[name];
-  if (raw === undefined) return productionDefault;
-  const trimmed = raw.trim();
-  if (!trimmed) {
-    throw new Error(
-      `${name} is set but empty. Unset it to use ${productionDefault}, or provide a valid URL.`
-    );
-  }
-  return trimmed;
-}
+import {
+  MORAPAY_PRODUCTION_API_URL,
+  MORAPAY_PRODUCTION_CHECKOUT_URL,
+  readMorapayUrlEnv,
+} from "./morapay.config";
 
 let cached: Morapay | null = null;
 
@@ -58,7 +44,7 @@ export function getPublicConfig() {
       "MORAPAY_WIDGET_SCRIPT_URL is set but empty. Unset it to use /widget/morapay-checkout.js, or set a valid path."
     );
   }
-  const widgetScriptUrl = widgetRaw?.trim() || "/widget/morapay-checkout.js";
+  const widgetScriptUrl = widgetRaw?.trim() || "/widget/morapay-checkout";
 
   return {
     checkoutBaseUrl: readMorapayUrlEnv("MORAPAY_CHECKOUT_BASE_URL", MORAPAY_PRODUCTION_CHECKOUT_URL),

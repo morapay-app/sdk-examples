@@ -1,12 +1,9 @@
 "use client";
 
 import * as React from "react";
-import {
-  DEFAULT_CHECKOUT_CONFIG,
-  type DemoCheckoutConfig,
-  loadCheckoutConfig,
-  saveCheckoutConfig,
-} from "@/lib/checkout-config";
+import { DEFAULT_CHECKOUT_CONFIG } from "../checkout.config";
+import { saveCheckoutConfig } from "../checkout.utils";
+import type { DemoCheckoutConfig } from "../checkout.types";
 
 type ConfigOrbProps = {
   config: DemoCheckoutConfig;
@@ -149,7 +146,7 @@ export function ConfigOrb({ config, onChange }: ConfigOrbProps) {
           </button>
 
           <p className="config-orb__hint">
-            Widget keeps the payer on your storefront. Redirect sends them to hosted checkout.
+            Widget uses <code>@morapay/react</code> on your storefront. Redirect sends payers to hosted checkout.
             Catalog links use <code>products.ensureCheckoutLink()</code>; invoice mode uses{" "}
             <code>products.link({`{ isOneTime: true }`})</code> per checkout.
           </p>
@@ -166,19 +163,4 @@ export function ConfigOrb({ config, onChange }: ConfigOrbProps) {
       </button>
     </div>
   );
-}
-
-export function useCheckoutConfig(): [DemoCheckoutConfig, (next: DemoCheckoutConfig) => void] {
-  const [config, setConfig] = React.useState<DemoCheckoutConfig>(DEFAULT_CHECKOUT_CONFIG);
-
-  React.useEffect(() => {
-    setConfig(loadCheckoutConfig());
-  }, []);
-
-  const update = React.useCallback((next: DemoCheckoutConfig) => {
-    setConfig(next);
-    saveCheckoutConfig(next);
-  }, []);
-
-  return [config, update];
 }

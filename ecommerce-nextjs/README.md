@@ -1,4 +1,4 @@
-# Ecommerce example — `@morapay/sdk`
+# Ecommerce example — `@morapay/sdk` + `@morapay/react`
 
 In-house storefront demo showing how a merchant binds products to Morapay and checks out with either **widget** or **redirect**.
 
@@ -13,12 +13,22 @@ In-house storefront demo showing how a merchant binds products to Morapay and ch
    - **Widget — Live** — hosted checkout iframe (real MoMo OTP in checkout app)
    - **Redirect** — full-page hosted checkout
 
+## Packages (how developers integrate)
+
+| Concern | Package | Where in this app |
+|---------|---------|-------------------|
+| Merchant API (products, links, webhooks) | `@morapay/sdk` | `src/lib/morapay.ts`, API routes |
+| Next.js BFF proxies (`/api/public/*`) | `@morapay/sdk` → `sdk/nextjs` | `src/app/api/public/**` |
+| Checkout widget (modal UI) | `@morapay/react` | `src/lib/morapay-widget-client.ts` → storefront |
+
+Widget checkout uses **npm imports** from `@morapay/react` (not a dynamic script loader). `pnpm dev` still copies `morapay-checkout.js` to `public/widget/` for script-tag reference / self-hosting.
+
 ## Setup
 
 ```bash
-# 1. Build SDK + widget
+# 1. Build SDK + React widget
 cd ../../sdk && pnpm install && pnpm run build
-cd ../morapay-web/packages/checkout-widget && pnpm run build
+cd ../frontend/packages/react && pnpm install && pnpm run build
 
 # 2. Configure & run
 cd ../../sdk-examples/ecommerce-nextjs
@@ -27,23 +37,23 @@ cp .env.example .env.local
 pnpm install && pnpm dev
 ```
 
-`pnpm dev` runs `predev` → copies the latest widget into `public/widget/morapay-checkout.js`.
-
 Open http://localhost:3020
+
+See [ARCHITECTURE.md](./ARCHITECTURE.md) for the feature-driven folder layout and naming rules.
 
 ## Local full stack
 
 ```bash
 cd backend && pnpm dev                    # API :4001
-cd morapay-web/apps/checkout && pnpm dev  # Checkout :3002
+cd frontend/apps/checkout && pnpm dev     # Checkout :3002
 cd sdk-examples/ecommerce-nextjs && pnpm dev  # Store :3020
 ```
 
-Refresh widget after checkout-widget changes:
+Refresh widget after `@morapay/react` changes:
 
 ```bash
-cd morapay-web/packages/checkout-widget && pnpm run build
-cd sdk-examples/ecommerce-nextjs && pnpm copy-widget
+cd frontend/packages/react && pnpm run build
+cd sdk-examples/ecommerce-nextjs && pnpm copy-widget   # optional — script-tag bundle
 ```
 
 If dev throws stale chunk errors: `pnpm dev:clean`
@@ -60,18 +70,35 @@ Browser storefront
       → catalog: products.ensureCheckoutLink()
       → invoice: products.link({ isOneTime: true, orderId })
 
-  Preview widget
-    → openPaymentLinkCheckout({ mode: "preview", apiBaseUrl: "/api/public" })
+  Preview widget (@morapay/react)
+    → openMorapayCheckoutPreviewModal({ publicCode, apiBaseUrl: "/api/public" })
     → GET /api/public/payment-links/[code]
     → MoMo: phone → Send OTP → resend timer (preview only)
 
-  Live widget / redirect
+  Live widget (@morapay/react)
+    → openMorapayCheckoutModal({ mode: "payment-link", checkoutBaseUrl, publicCode })
+
+  Redirect
     → checkout.morapay.io/{publicCode} (real payments)
 ```
 
 Secrets never leave the server. Store `checkoutPublicCode` on your product row (enriched from Morapay links in this demo).
 
-Shared helpers: `sdk/nextjs/` — see `sdk/nextjs/README.md`.
+Shared BFF helpers: `sdk/nextjs/server/` — see `sdk/nextjs/README.md`.
+
+## Widget client (copy into your app)
+
+```ts
+// src/lib/morapay-widget-client.ts — see this repo for the full helper
+import { openMorapayCheckoutPreviewModal, openMorapayCheckoutModal } from "@morapay/react";
+
+openMorapayCheckoutPreviewModal({
+  publicCode: "abc123",
+  apiBaseUrl: "/api/public",
+  businessName: "Northline Supply",
+  linkTitle: "Merino crew neck",
+});
+```
 
 ## SDK: catalog vs invoice
 

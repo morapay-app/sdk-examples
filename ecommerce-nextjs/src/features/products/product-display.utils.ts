@@ -1,6 +1,5 @@
 import type { Product } from "@morapay/sdk";
-
-export type ProductLabel = { text: string; tone: "sale" | "new" | "default" };
+import type { ProductLabel } from "./products.types";
 
 const CATEGORY_LABEL: Record<string, string> = {
   PHYSICAL: "Physical product",

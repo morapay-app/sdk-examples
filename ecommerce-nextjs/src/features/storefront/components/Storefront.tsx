@@ -2,87 +2,17 @@
 
 import * as React from "react";
 import type { Product } from "@morapay/sdk";
-import { ConfigOrb, useCheckoutConfig } from "@/components/config-orb";
-import { ProductCard, type CheckoutResult } from "@/components/product-card";
-import { linkIsOneTime } from "@/lib/checkout-config";
-import type { StorefrontProduct } from "@/lib/catalog-checkout";
-import { openPaymentLinkCheckout } from "@morapay/sdk-nextjs/client/open-payment-link-checkout";
-
-type PublicConfig = {
-  checkoutBaseUrl: string;
-  widgetScriptUrl: string;
-  publicApiBase: string;
-};
-
-const SEED_PRODUCTS = [
-  {
-    name: "Merino crew neck",
-    price: 68,
-    currency: "GHS",
-    type: "PHYSICAL" as const,
-    description: "Soft wool blend, ships in 3 days.",
-  },
-  {
-    name: "Pro API plan (monthly)",
-    price: 29,
-    currency: "GHS",
-    type: "DIGITAL" as const,
-    description: "Unlimited sandbox calls.",
-  },
-  {
-    name: "Onboarding session",
-    price: 150,
-    currency: "GHS",
-    type: "SERVICE" as const,
-    description: "60 min integration review.",
-  },
-];
-
-type SortOption = "best" | "price-asc" | "price-desc" | "newest";
-
-const TYPE_FILTERS = [
-  { id: "PHYSICAL", label: "Physical" },
-  { id: "DIGITAL", label: "Digital" },
-  { id: "SERVICE", label: "Service" },
-] as const;
-
-function sortProducts(list: Product[], sort: SortOption): Product[] {
-  const next = [...list];
-  switch (sort) {
-    case "price-asc":
-      return next.sort((a, b) => Number(a.price) - Number(b.price));
-    case "price-desc":
-      return next.sort((a, b) => Number(b.price) - Number(a.price));
-    case "newest":
-      return next.sort(
-        (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
-      );
-    case "best":
-    default:
-      return next.sort((a, b) => a.name.localeCompare(b.name));
-  }
-}
-
-async function normalizeDemoCurrency(catalog: Product[]): Promise<number> {
-  let fixed = 0;
-  for (const seed of SEED_PRODUCTS) {
-    const matches = catalog.filter(
-      (product) => product.name.trim().toLowerCase() === seed.name.trim().toLowerCase()
-    );
-    for (const product of matches) {
-      if (product.currency === seed.currency) continue;
-      const res = await fetch(`/api/products/${encodeURIComponent(product.id)}`, {
-        method: "PATCH",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ currency: seed.currency }),
-      });
-      const json = await res.json();
-      if (!res.ok) throw new Error(json.error ?? `Failed to update ${product.name}`);
-      fixed += 1;
-    }
-  }
-  return fixed;
-}
+import {
+  ConfigOrb,
+  linkIsOneTime,
+  openPaymentLinkCheckout,
+  useCheckoutConfig,
+} from "@/features/checkout";
+import { ProductCard, type CheckoutResult } from "@/features/products";
+import type { StorefrontProduct } from "@/features/products";
+import { SEED_PRODUCTS, TYPE_FILTERS } from "../storefront.constants";
+import type { PublicConfig, SortOption } from "../storefront.types";
+import { normalizeDemoCurrency, sortProducts } from "../storefront.utils";
 
 export function Storefront() {
   const [config, setConfig] = useCheckoutConfig();
@@ -211,12 +141,11 @@ export function Storefront() {
     }
   };
 
-  const openWidgetCheckout = async (result: CheckoutResult, title: string) => {
+  const openWidgetCheckout = (result: CheckoutResult, title: string) => {
     if (!publicConfig) throw new Error("Checkout config not loaded");
 
-    await openPaymentLinkCheckout({
+    openPaymentLinkCheckout({
       publicCode: result.link.publicCode,
-      widgetScriptUrl: publicConfig.widgetScriptUrl,
       mode: config.widgetExperience,
       apiBaseUrl: publicConfig.publicApiBase,
       checkoutBaseUrl: publicConfig.checkoutBaseUrl,
@@ -324,7 +253,7 @@ export function Storefront() {
 
       const experienceLabel =
         config.widgetExperience === "preview" ? "preview + API link data" : "live iframe";
-      await openWidgetCheckout(result, product.name);
+      openWidgetCheckout(result, product.name);
       setStatus({
         kind: "success",
         message: `Widget opened (${experienceLabel}) — ${strategyLabel} · ${result.link.publicCode}${reuseNote}`,
