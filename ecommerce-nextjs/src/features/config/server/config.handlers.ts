@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { jsonError } from "@/lib/api/json-error";
+import { jsonError } from "@/lib/api/jsonError";
 import { getMorapayClient, getPublicConfig } from "@/lib/morapay";
 
 export async function getPublicConfigHandler() {

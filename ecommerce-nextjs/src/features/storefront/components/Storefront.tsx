@@ -112,7 +112,7 @@ export function Storefront() {
         const missingLink = products.filter((p) => !p.checkoutPublicCode?.trim());
         if (missingLink.length > 0) {
           for (const product of missingLink) {
-            await fetch(`/api/products/${encodeURIComponent(product.id)}/checkout-link`);
+            await fetch(`/api/products/${encodeURIComponent(product.id)}/checkoutLink`);
           }
           await loadProducts();
           setStatus({

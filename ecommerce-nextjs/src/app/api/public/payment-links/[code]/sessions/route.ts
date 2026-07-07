@@ -1,4 +1,4 @@
-import { proxyPublicPaymentLinkSessionPost } from "@morapay/sdk-nextjs/server/proxy-public-api";
+import { proxyPublicPaymentLinkSessionPost } from "@morapay/sdk-nextjs/server/proxyPublicApi";
 import { getApiBaseUrl } from "@/lib/morapay";
 
 type RouteContext = { params: Promise<{ code: string }> };

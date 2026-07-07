@@ -3,9 +3,9 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "copy-widget": "node scripts/copy-widget.mjs",
-    "predev": "node scripts/copy-widget.mjs",
-    "prebuild": "node scripts/copy-widget.mjs",
+    "copyWidget": "node scripts/copyWidget.mjs",
+    "predev": "node scripts/copyWidget.mjs",
+    "prebuild": "node scripts/copyWidget.mjs",
     "dev": "next dev --port 3020",
     "dev:clean": "rm -rf .next && next dev --port 3020",
     "build": "next build",

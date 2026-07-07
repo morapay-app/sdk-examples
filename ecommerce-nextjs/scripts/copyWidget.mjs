@@ -9,7 +9,7 @@ const candidates = [
   path.resolve(here, "../../../morapay-web/apps/checkout/public/widget/morapay-checkout.js"),
 ];
 const destDir = path.resolve(here, "../public/widget");
-const destFile = path.join(destDir, "morapay-checkout.js");
+const destFile = path.join(destDir, "morapayCheckout.js");
 
 function validateWidgetBundle(source) {
   return (
@@ -26,11 +26,11 @@ try {
     try {
       const bundle = await readFile(src, "utf8");
       if (!validateWidgetBundle(bundle)) {
-        console.warn(`[copy-widget] skipped stale bundle at ${src}`);
+        console.warn(`[copyWidget] skipped stale bundle at ${src}`);
         continue;
       }
       await copyFile(src, destFile);
-      console.log(`Copied widget → public/widget/morapay-checkout.js (from ${src})`);
+      console.log(`Copied widget → public/widget/morapayCheckout.js (from ${src})`);
       copied = true;
       break;
     } catch {
@@ -39,9 +39,9 @@ try {
   }
   if (!copied) {
     console.warn(
-      "[copy-widget] skipped: build @morapay/react first (cd frontend/packages/react && pnpm run build)"
+      "[copyWidget] skipped: build @morapay/react first (cd frontend/packages/react && pnpm run build)"
     );
   }
 } catch (err) {
-  console.warn("[copy-widget] skipped:", err instanceof Error ? err.message : err);
+  console.warn("[copyWidget] skipped:", err instanceof Error ? err.message : err);
 }

@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import type { PaymentLink } from "@morapay/sdk";
-import { jsonError } from "@/lib/api/json-error";
+import { jsonError } from "@/lib/api/jsonError";
 import { getMorapayClient } from "@/lib/morapay";
 import {
   bindCatalogCheckoutLink,

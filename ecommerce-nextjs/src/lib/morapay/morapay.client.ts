@@ -41,10 +41,10 @@ export function getPublicConfig() {
   const widgetRaw = process.env.MORAPAY_WIDGET_SCRIPT_URL;
   if (widgetRaw !== undefined && !widgetRaw.trim()) {
     throw new Error(
-      "MORAPAY_WIDGET_SCRIPT_URL is set but empty. Unset it to use /widget/morapay-checkout.js, or set a valid path."
+      "MORAPAY_WIDGET_SCRIPT_URL is set but empty. Unset it to use /widget/morapayCheckout.js, or set a valid path."
     );
   }
-  const widgetScriptUrl = widgetRaw?.trim() || "/widget/morapay-checkout";
+  const widgetScriptUrl = widgetRaw?.trim() || "/widget/morapayCheckout.js";
 
   return {
     checkoutBaseUrl: readMorapayUrlEnv("MORAPAY_CHECKOUT_BASE_URL", MORAPAY_PRODUCTION_CHECKOUT_URL),

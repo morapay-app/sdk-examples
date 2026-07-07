@@ -13,4 +13,4 @@ export {
   productLabel,
   productRating,
   productSoldLabel,
-} from "./product-display.utils";
+} from "./productDisplay.utils";

@@ -1,4 +1,4 @@
-import { proxyPublicQuotesCheckoutPost } from "@morapay/sdk-nextjs/server/proxy-public-api";
+import { proxyPublicQuotesCheckoutPost } from "@morapay/sdk-nextjs/server/proxyPublicApi";
 import { getApiBaseUrl } from "@/lib/morapay";
 
 export async function POST(request: Request) {

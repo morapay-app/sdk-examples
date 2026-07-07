@@ -31,7 +31,7 @@ cd ../../sdk && pnpm install && pnpm run build
 cd ../frontend/packages/react && pnpm install && pnpm run build
 
 # 2. Configure & run
-cd ../../sdk-examples/ecommerce-nextjs
+cd ../../sdk-examples/ecommerceNextjs
 cp .env.example .env.local
 # MORAPAY_PUBLIC_KEY, MORAPAY_SECRET_KEY, MORAPAY_BASE_URL, MORAPAY_CHECKOUT_BASE_URL
 pnpm install && pnpm dev
@@ -46,14 +46,14 @@ See [ARCHITECTURE.md](./ARCHITECTURE.md) for the feature-driven folder layout an
 ```bash
 cd backend && pnpm dev                    # API :4001
 cd frontend/apps/checkout && pnpm dev     # Checkout :3002
-cd sdk-examples/ecommerce-nextjs && pnpm dev  # Store :3020
+cd sdk-examples/ecommerceNextjs && pnpm dev  # Store :3020
 ```
 
 Refresh widget after `@morapay/react` changes:
 
 ```bash
 cd frontend/packages/react && pnpm run build
-cd sdk-examples/ecommerce-nextjs && pnpm copy-widget   # optional — script-tag bundle
+cd sdk-examples/ecommerceNextjs && pnpm copyWidget   # optional — script-tag bundle
 ```
 
 If dev throws stale chunk errors: `pnpm dev:clean`

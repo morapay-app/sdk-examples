@@ -1,4 +1,4 @@
-import { proxyPublicFiatVerifyGet } from "@morapay/sdk-nextjs/server/proxy-public-api";
+import { proxyPublicFiatVerifyGet } from "@morapay/sdk-nextjs/server/proxyPublicApi";
 import { getApiBaseUrl } from "@/lib/morapay";
 
 type RouteContext = { params: Promise<{ reference: string }> };

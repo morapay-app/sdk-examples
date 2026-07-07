@@ -10,7 +10,7 @@ import {
   productLabel,
   productRating,
   productSoldLabel,
-} from "../product-display.utils";
+} from "../productDisplay.utils";
 import type { CheckoutResult } from "../products.types";
 
 type ProductCardProps = {
