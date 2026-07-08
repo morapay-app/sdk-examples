@@ -25,13 +25,18 @@ Widget checkout uses **npm imports** from `@morapay/react` (not a dynamic script
 
 ## Setup
 
+> **Requires the full monorepo checkout.** `@morapay/sdk` and `@morapay/react` are not
+> published to npm yet, so this example consumes them as local `file:` dependencies
+> (`../../sdk` and `../../morapay-web/packages/react`). Clone the whole repo — the relative
+> paths resolve automatically — rather than copying this folder on its own.
+
 ```bash
-# 1. Build SDK + React widget
+# 1. Build the local SDK + React widget packages (produces their dist/ output)
 cd ../../sdk && pnpm install && pnpm run build
-cd ../frontend/packages/react && pnpm install && pnpm run build
+cd ../morapay-web && pnpm install && pnpm --filter @morapay/react build
 
 # 2. Configure & run
-cd ../../sdk-examples/ecommerceNextjs
+cd ../sdk-examples/ecommerce-nextjs
 cp .env.example .env.local
 # MORAPAY_PUBLIC_KEY, MORAPAY_SECRET_KEY, MORAPAY_BASE_URL, MORAPAY_CHECKOUT_BASE_URL
 pnpm install && pnpm dev
@@ -44,16 +49,20 @@ See [ARCHITECTURE.md](./ARCHITECTURE.md) for the feature-driven folder layout an
 ## Local full stack
 
 ```bash
-cd backend && pnpm dev                    # API :4001
-cd frontend/apps/checkout && pnpm dev     # Checkout :3002
-cd sdk-examples/ecommerceNextjs && pnpm dev  # Store :3020
+cd backend && pnpm dev                          # API :4001
+just checkout dev                               # Checkout :3002 (Infisical injects Dynamic env)
+cd sdk-examples/ecommerce-nextjs && pnpm dev     # Store :3020
 ```
+
+> **Important:** run checkout via `just checkout dev` (from repo root), not plain `pnpm dev`.
+> `NEXT_PUBLIC_DYNAMIC_ENVIRONMENT_ID` lives in Infisical (`/frontend/checkout`); without it the
+> checkout app falls back to MetaMask-only and balances won't load.
 
 Refresh widget after `@morapay/react` changes:
 
 ```bash
-cd frontend/packages/react && pnpm run build
-cd sdk-examples/ecommerceNextjs && pnpm copyWidget   # optional — script-tag bundle
+cd morapay-web && pnpm --filter @morapay/react build
+cd sdk-examples/ecommerce-nextjs && pnpm copyWidget   # optional — script-tag bundle
 ```
 
 If dev throws stale chunk errors: `pnpm dev:clean`

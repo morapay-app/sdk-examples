@@ -9,8 +9,8 @@ importers:
   .:
     dependencies:
       '@morapay/react':
-        specifier: file:../../frontend/packages/react
-        version: file:../../frontend/packages/react
+        specifier: file:../../morapay-web/packages/react
+        version: file:../../morapay-web/packages/react
       '@morapay/sdk':
         specifier: file:../../sdk
         version: file:../../sdk
@@ -195,8 +195,8 @@ packages:
     cpu: [x64]
     os: [win32]
 
-  '@morapay/react@file:../../frontend/packages/react':
-    resolution: {directory: ../../frontend/packages/react, type: directory}
+  '@morapay/react@file:../../morapay-web/packages/react':
+    resolution: {directory: ../../morapay-web/packages/react, type: directory}
 
   '@morapay/sdk@file:../../sdk':
     resolution: {directory: ../../sdk, type: directory}
@@ -474,7 +474,7 @@ snapshots:
   '@img/sharp-win32-x64@0.34.5':
     optional: true
 
-  '@morapay/react@file:../../frontend/packages/react': {}
+  '@morapay/react@file:../../morapay-web/packages/react': {}
 
   '@morapay/sdk@file:../../sdk': {}
 
